@@ -2,9 +2,9 @@ name: Build Android App
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -22,6 +22,22 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
+
+    - name: Disable Google Services Plugin if file missing
+      run: |
+        if [ ! -f "app/google-services.json" ]; then
+          BUILD_FILE="app/build.gradle.kts"
+          if [ -f "$BUILD_FILE" ]; then
+            sed -i '/id("com\.google\.gms\.google-services")/s/^/\/\//' "$BUILD_FILE"
+            echo "Google Services plugin disabled in $BUILD_FILE for CI build."
+          else
+            BUILD_FILE="app/build.gradle"
+            if [ -f "$BUILD_FILE" ]; then
+              sed -i 's/apply plugin: '\''com\.google\.gms\.google-services'\''/\/\/apply plugin: '\''com\.google\.gms\.google-services'\''/' "$BUILD_FILE"
+              echo "Google Services plugin disabled in $BUILD_FILE for CI build."
+            fi
+          fi
+        fi
 
     - name: Cache Gradle dependencies
       uses: actions/cache@v4
