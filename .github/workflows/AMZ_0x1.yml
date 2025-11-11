@@ -60,10 +60,10 @@ jobs:
         echo "Contents of app/build/outputs:"
         ls -la app/build/outputs/
 
-    - name: Upload Release APK artifact if exists
+    - name: Upload All APK artifacts if exist
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: app-release.apk
-        path: app/build/outputs/apk/release/app-release.apk
+        name: all-apks
+        path: app/build/outputs/**/*.apk
         if-no-files-found: ignore
