@@ -51,7 +51,7 @@ jobs:
 
     - name: Build Release APK with verbose output
       run: |
-        ./gradlew assembleRelease --stacktrace --info
+        ./gradlew assembleRelease
 
     - name: List build outputs for debugging
       run: |
