@@ -49,11 +49,21 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Build Release APK
-      run: ./gradlew assembleRelease
+    - name: Build Release APK with verbose output
+      run: |
+        ./gradlew assembleRelease --stacktrace --info
 
-    - name: Upload Release APK artifact
+    - name: List build outputs for debugging
+      run: |
+        echo "Contents of app/build/outputs/apk:"
+        find app/build/outputs/apk -type f -name "*.apk" || echo "No APK files found"
+        echo "Contents of app/build/outputs:"
+        ls -la app/build/outputs/
+
+    - name: Upload Release APK artifact if exists
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: app-release.apk
         path: app/build/outputs/apk/release/app-release.apk
+        if-no-files-found: ignore
